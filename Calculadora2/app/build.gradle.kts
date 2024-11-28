@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "br.edu.ifpb.calculadora"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "br.edu.ifpb.calculadora"
