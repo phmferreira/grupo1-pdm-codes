@@ -6,6 +6,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import java.lang.NumberFormatException
+
+private const val OPERACAO_PENDENTE_CHAVE = "OperancaoPendente"
+private const val OPERANDO1_CHAVE = "Operando1"
+private const val OPERANDO1_STATUS_CHAVE = "Operando1Status"
 
 class MainActivity : AppCompatActivity() {
 
@@ -70,10 +75,13 @@ class MainActivity : AppCompatActivity() {
         val operacaoListener = View.OnClickListener {
             botao ->
             val operacao = (botao as Button).text.toString()
-            val valor = novoNumero.text.toString()
-            if (valor.isNotEmpty()){
+            try {
+                val valor = novoNumero.text.toString()
                 realizarCalculo(valor)
+            } catch (e: NumberFormatException){
+                novoNumero.setText("")
             }
+
             operacaoPendente = operacao
             displayOperacao.text = operacaoPendente
         }
@@ -107,4 +115,24 @@ class MainActivity : AppCompatActivity() {
         novoNumero.setText("")
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if(operando1 != null){
+            outState.putDouble(OPERANDO1_CHAVE, operando1!!)
+            outState.putBoolean(OPERANDO1_STATUS_CHAVE, true)
+        }
+        outState.putString(OPERACAO_PENDENTE_CHAVE, operacaoPendente)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        if(savedInstanceState.getBoolean(OPERANDO1_STATUS_CHAVE)){
+            operando1 =
+                savedInstanceState.getDouble(OPERANDO1_CHAVE)
+        }
+        operacaoPendente = savedInstanceState.getString(
+            OPERACAO_PENDENTE_CHAVE
+        ).toString()
+        displayOperacao.text = operacaoPendente
+    }
 }
